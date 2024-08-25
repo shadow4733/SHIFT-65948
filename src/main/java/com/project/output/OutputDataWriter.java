@@ -3,6 +3,7 @@ package com.project.output;
 import com.project.args.ArgumentParser;
 import com.project.input.InputDataHandler;
 import com.project.input.InputDataType;
+import com.project.stats.Statistics;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -14,10 +15,12 @@ import java.util.*;
 public class OutputDataWriter {
     private final ArgumentParser argumentParser;
     private final InputDataHandler inputDataHandler;
+    private final Statistics statistics;
 
-    public OutputDataWriter(ArgumentParser argumentParser, InputDataHandler inputDataHandler) {
+    public OutputDataWriter(ArgumentParser argumentParser, InputDataHandler inputDataHandler, Statistics statistics) {
         this.argumentParser = argumentParser;
         this.inputDataHandler = inputDataHandler;
+        this.statistics = statistics;
     }
 
     public void writeOutputData() {
@@ -38,12 +41,21 @@ public class OutputDataWriter {
                     for (String line : data) {
                         writer.write(line);
                         writer.newLine();
+                        if (dataType == InputDataType.INTEGER) {
+                            statistics.updateNumberStatistics(line, dataType);
+                        } else if (dataType == InputDataType.FLOAT) {
+                            statistics.updateNumberStatistics(line, dataType);
+                        } else if (dataType == InputDataType.STRING) {
+                            statistics.updateStringStatistics(line);
+                        }
                     }
                 } catch (IOException e) {
                     throw new RuntimeException("Error writing data to file: " + outputFilePath, e);
                 }
             }
         }
+
+        statistics.printStatistics();
     }
 
     private String generateOutputFileName(String prefix, InputDataType dataType) {
