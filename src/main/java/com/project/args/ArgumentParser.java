@@ -27,8 +27,13 @@ public class ArgumentParser {
                     options.put(arg, args[i + 1]);
                     i++;
                 } else {
+                    if (arg.equals(OUTPUT_DIRECTORY_OPTION) || arg.equals(PREFIX_OPTION)) {
+                        throw new IllegalArgumentException("Option " + arg + " requires an argument");
+                    }
                     options.put(arg, null);
                 }
+            } else {
+                throw new IllegalArgumentException("Unexpected argument: " + arg);
             }
         }
 
